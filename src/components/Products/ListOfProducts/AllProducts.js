@@ -24,6 +24,12 @@ const AllProducts = () => {
           />
         ))}
       </ul>
+      <p className={classes.totalProducts}>
+        Products in total:
+        <strong>
+          <i>{products.length}</i>
+        </strong>
+      </p>
     </Card>
   );
 };

@@ -16,3 +16,8 @@ ul.listOfAllProducts li:nth-child(even) {
   height: 90%;
   top: 5%;
 }
+
+.totalProducts {
+  text-align: right;
+  margin: 0.5rem 0.5rem 0 0;
+}
