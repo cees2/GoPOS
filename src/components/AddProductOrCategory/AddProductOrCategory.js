@@ -1,18 +1,32 @@
 import classes from "./AddProductOrCategory.module.css";
 import Card from "../UI/Card";
 import SubmitButton from "../UI/SubmitButton";
-import { useSelector } from "react-redux";
 import { useRef, useState } from "react";
 import useHttp from "../../hooks/use-http";
-import CategoryOption from "../Products/UpdateProduct/CategoryOption";
+import Header from "../UI/Header";
+import UserInput from "../UI/UserInput";
+import ActionResult from "../UI/ActionResult";
 
 const AddProductOrCategory = () => {
+  const [actionResult, setActionResult] = useState("");
   const [selectedAction, setSelectedAction] = useState("");
-  const categories = useSelector((state) => state.categories.categories);
   const productNameInputRef = useRef();
   const productCategoryInputRef = useRef();
   const categoryNameInputRef = useRef();
   const { getCategories, addCategory, addProduct, getProducts } = useHttp();
+
+  const resetActionResult = () => {
+    setTimeout(() => {
+      setActionResult((prevState) => {
+        return {
+          type: prevState.type,
+          message: prevState.message,
+          isActive: false,
+        };
+      });
+    }, 3500);
+    setTimeout(() => setActionResult(""), 4000);
+  };
 
   const productInputHandler = () => {
     setSelectedAction("product");
@@ -29,7 +43,12 @@ const AddProductOrCategory = () => {
     const productCategory = productCategoryInputRef.current.value;
 
     if (!productName) {
-      alert("Please provide a product name.");
+      setActionResult({
+        type: "error",
+        message: "Please provide a product name.",
+        isActive: true,
+      });
+      resetActionResult();
       return;
     }
 
@@ -45,15 +64,40 @@ const AddProductOrCategory = () => {
       measure_type: "Kilogram",
       type: "BASIC",
     };
-
-    await addProduct(productToBeAdded);
-
+    try {
+      await addProduct(productToBeAdded);
+    } catch (err) {
+      setActionResult({
+        type: "error",
+        message: err.message,
+        isActive: true,
+      });
+      resetActionResult();
+      return;
+    }
     await getProducts();
+
+    setActionResult({
+      type: "success",
+      message: "Product has been successfully added.",
+      isActive: true,
+    });
+    resetActionResult();
   };
 
   const categoryFormSubmitHandler = async (e) => {
     e.preventDefault();
-    const categoryName = categoryNameInputRef.current.value;
+    const categoryName = categoryNameInputRef.current.value.trim();
+
+    if (!categoryName) {
+      setActionResult({
+        type: "error",
+        message: "Provide a category name.",
+        isActive: true,
+      });
+      resetActionResult();
+      return;
+    }
 
     const { data: fetchedCategories } = await getCategories();
 
@@ -62,90 +106,114 @@ const AddProductOrCategory = () => {
         (category) => category.name.toUpperCase() === categoryName.toUpperCase()
       )
     ) {
-      alert("This category already exist.");
+      setActionResult({
+        type: "error",
+        message: "This category already exist.",
+        isActive: true,
+      });
+      resetActionResult();
       return;
     }
+
     try {
       await addCategory(categoryName);
-
-      await getCategories();
     } catch (err) {
-      console.log(err.message);
+      setActionResult({
+        type: "error",
+        message: err.message,
+        isActive: true,
+      });
+      resetActionResult();
+      return;
     }
+    await getCategories();
+
+    setActionResult({
+      type: "success",
+      message: "Category has been successfully added.",
+      isActive: true,
+    });
+    resetActionResult();
   };
 
   return (
-    <Card class={classes.addProductCategoryWrapper}>
-      <h3 className={classes.addProductCategoryHeader}>I want to add</h3>
-      <form className={classes.addProductCategoryForm}>
-        <div className={classes.signleRadioInput}>
-          <label htmlFor="product">Product</label>
-          <input
-            type="radio"
-            id="product"
-            name="add"
-            value="product"
-            onInput={productInputHandler}
-          />
-        </div>
-        <div className={classes.signleRadioInput}>
-          <label htmlFor="category">Category</label>
-          <input
-            type="radio"
-            id="category"
-            name="add"
-            value="category"
-            onInput={categoryInputHandler}
-          />
-        </div>
-      </form>
-      {selectedAction === "product" && (
-        <form
-          onSubmit={productFormSubmitHandler}
-          className={classes.addProductForm}
-        >
-          <div className={classes.singleInput}>
-            <label htmlFor="productName">Product Name</label>
+    <>
+      <ActionResult
+        type={actionResult.type}
+        actionContent={actionResult.message}
+        isActive={actionResult.isActive}
+      />
+      <Card class={classes.addProductCategoryWrapper}>
+        <Header headerContent="I want to add" />
+        <form className={classes.addProductCategoryForm}>
+          <div className={classes.singleRadioInput}>
+            <label htmlFor="product">Product</label>
             <input
+              type="radio"
+              id="product"
+              name="add"
+              value="product"
+              onInput={productInputHandler}
+            />
+          </div>
+          <div className={classes.singleRadioInput}>
+            <label htmlFor="category">Category</label>
+            <input
+              type="radio"
+              id="category"
+              name="add"
+              value="category"
+              onInput={categoryInputHandler}
+            />
+          </div>
+        </form>
+        {selectedAction === "product" && (
+          <form
+            onSubmit={productFormSubmitHandler}
+            className={classes.addProductForm}
+          >
+            <UserInput
+              class=""
+              type="text"
+              for="productName"
+              label="Product Name"
               id="productName"
               name="productName"
               placeholder="e.g. Cisowianka"
-              ref={productNameInputRef}
+              inputRef={productNameInputRef}
             />
-          </div>
-          <div className={classes.singleInput}>
-            <label htmlFor="productCategory">Product Category</label>
-            <select
-              id="productCategory"
+            <UserInput
+              class=""
+              type="select"
+              for="productCategory"
+              label="Product Category"
+              id="pproductCategory"
               name="productCategory"
-              ref={productCategoryInputRef}
-            >
-              {categories.map((category, i) => (
-                <CategoryOption key={i} categoryName={category.name} />
-              ))}
-            </select>
-          </div>
-          <SubmitButton buttonContent="Add" />
-        </form>
-      )}
-      {selectedAction === "category" && (
-        <form
-          onSubmit={categoryFormSubmitHandler}
-          className={classes.addCategoryForm}
-        >
-          <div className={classes.singleInput}>
-            <label htmlFor="Category">Category Name</label>
-            <input
-              id="Category"
-              name="Category"
-              placeholder="e.g. Football"
-              ref={categoryNameInputRef}
+              inputRef={productCategoryInputRef}
             />
-          </div>
-          <SubmitButton buttonContent="Add" />
-        </form>
-      )}
-    </Card>
+            <SubmitButton buttonContent="Add" />
+          </form>
+        )}
+        {selectedAction === "category" && (
+          <form
+            onSubmit={categoryFormSubmitHandler}
+            className={classes.addCategoryForm}
+          >
+            <UserInput
+              class=""
+              type="text"
+              for="category"
+              label="Category Name"
+              id="category"
+              name="category"
+              placeholder="e.g. Football"
+              inputRef={categoryNameInputRef}
+            />
+            <SubmitButton buttonContent="Add" />
+          </form>
+        )}
+      </Card>
+    </>
   );
 };
 

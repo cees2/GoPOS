@@ -1,12 +1,15 @@
 import Card from "../../UI/Card";
 import SubmitButton from "../../UI/SubmitButton";
 import { useSelector } from "react-redux";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import useHttp from "../../../hooks/use-http";
-import CategoryOption from "./CategoryOption";
 import classes from "./UpdateProduct.module.css";
+import Header from "../../UI/Header";
+import UserInput from "../../UI/UserInput";
+import ActionResult from "../../UI/ActionResult";
 
 const UpdateProduct = () => {
+  const [actionResult, setActionResult] = useState("");
   const categories = useSelector((state) => state.categories.categories);
   const products = useSelector((state) => state.products.products);
   const oldProductNameInputRef = useRef();
@@ -15,6 +18,19 @@ const UpdateProduct = () => {
   const newProductCategoryInputRef = useRef();
   const { getProducts, getOneProduct, getOneCategory, updateProduct } =
     useHttp();
+
+  const resetActionResult = () => {
+    setTimeout(() => {
+      setActionResult((prevState) => {
+        return {
+          type: prevState.type,
+          message: prevState.message,
+          isActive: false,
+        };
+      });
+    }, 3500);
+    setTimeout(() => setActionResult(""), 4000);
+  };
 
   const formSubmitHandler = async (e) => {
     e.preventDefault();
@@ -27,12 +43,32 @@ const UpdateProduct = () => {
     );
 
     if (!oldProductName || !newProductName) {
-      alert("Fill in every input");
+      setActionResult({
+        type: "error",
+        message: "Fill in every input",
+        isActive: true,
+      });
+      resetActionResult();
+      return;
+    }
+
+    if (oldProductName === newProductName) {
+      setActionResult({
+        type: "error",
+        message: "New product can not have the same name as old one.",
+        isActive: true,
+      });
+      resetActionResult();
       return;
     }
 
     if (!oldProduct) {
-      alert("This product does not exist.");
+      setActionResult({
+        type: "error",
+        message: "This product does not exist.",
+        isActive: true,
+      });
+      resetActionResult();
       return;
     }
 
@@ -43,14 +79,24 @@ const UpdateProduct = () => {
     const { data: fetchedOldProduct } = await getOneProduct(oldProductId);
 
     if (fetchedOldProduct.name.toUpperCase() !== oldProductName.toUpperCase()) {
-      alert("This product does not exist in our DB");
+      setActionResult({
+        type: "error",
+        message: "This product does not exist in our DB",
+        isActive: true,
+      });
+      resetActionResult();
       return;
     }
 
     const fetchedOldCategory = getOneCategory(oldProductId);
 
     if (!fetchedOldCategory) {
-      alert("This category does not exist in our DB");
+      setActionResult({
+        type: "error",
+        message: "This category does not exist in our DB",
+        isActive: true,
+      });
+      resetActionResult();
       return;
     }
 
@@ -59,7 +105,12 @@ const UpdateProduct = () => {
     );
 
     if (fetchedOldProduct.category_id !== oldCategoryId) {
-      alert("Incorrect category");
+      setActionResult({
+        type: "error",
+        message: "Incorrect category",
+        isActive: true,
+      });
+      resetActionResult();
       return;
     }
 
@@ -71,62 +122,83 @@ const UpdateProduct = () => {
       (category) => category.name === newProductCategory
     ).id;
 
-    await updateProduct(fetchedOldProduct.id, newProduct);
+    try {
+      await updateProduct(fetchedOldProduct.id, newProduct);
+    } catch (err) {
+      setActionResult({
+        type: "error",
+        message: err.message,
+        isActive: true,
+      });
+      resetActionResult();
+      return;
+    }
 
     await getProducts();
 
-    console.log("KOniec", products);
+    setActionResult({
+      type: "success",
+      message: "Product has been successfully updated",
+      isActive: true,
+    });
+    resetActionResult();
   };
 
   return (
-    <Card class={classes.updateProductWrapper}>
-      <h3 className={classes.changeProductHeader}>Change product</h3>
-      <form onSubmit={formSubmitHandler} className={classes.updateProductForm}>
-        <div className={classes.singleTextInput}>
-          <label htmlFor="productName">Old Product Name</label>
-          <input
+    <>
+      <ActionResult
+        type={actionResult.type}
+        actionContent={actionResult.message}
+        isActive={actionResult.isActive}
+      />
+      <Card class={classes.updateProductWrapper}>
+        <Header headerContent="Change product" />
+        <form
+          onSubmit={formSubmitHandler}
+          className={classes.updateProductForm}
+        >
+          <UserInput
+            class=""
+            type="text"
+            for="productName"
+            label="Old Product Name"
             id="oldProductName"
             name="oldProductName"
             placeholder="e.g. Cisowianka"
-            ref={oldProductNameInputRef}
+            inputRef={oldProductNameInputRef}
           />
-        </div>
-        <div className={classes.singleSelectInput}>
-          <label htmlFor="productCategory">Old Product Category</label>
-          <select
+          <UserInput
+            class=""
+            type="select"
+            for="productCategory"
+            label="Old Product Category"
             id="oldProductCategory"
             name="oldProductCategory"
-            ref={oldProductCategoryInputRef}
-          >
-            {categories.map((category, i) => (
-              <CategoryOption key={i} categoryName={category.name} />
-            ))}
-          </select>
-        </div>
-        <div className={classes.singleTextInput}>
-          <label htmlFor="productName">New Product Name</label>
-          <input
+            inputRef={oldProductCategoryInputRef}
+          />
+          <UserInput
+            class=""
+            type="text"
+            for="productName"
+            label="New Product Name"
             id="newProductName"
             name="newProductName"
             placeholder="e.g. Cisowianka"
-            ref={newProductNameInputRef}
+            inputRef={newProductNameInputRef}
           />
-        </div>
-        <div className={classes.singleSelectInput}>
-          <label htmlFor="productCategory">New Product Category</label>
-          <select
+          <UserInput
+            class=""
+            type="select"
+            for="productCategory"
+            label="New Product Category"
             id="newProductCategory"
-            name="ewnProductCategory"
-            ref={newProductCategoryInputRef}
-          >
-            {categories.map((category, i) => (
-              <CategoryOption key={i} categoryName={category.name} />
-            ))}
-          </select>
-        </div>
-        <SubmitButton buttonContent="Submit" />
-      </form>
-    </Card>
+            name="newProductCategory"
+            inputRef={newProductCategoryInputRef}
+          />
+          <SubmitButton buttonContent="Submit" />
+        </form>
+      </Card>
+    </>
   );
 };
 

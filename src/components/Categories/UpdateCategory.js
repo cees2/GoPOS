@@ -1,16 +1,32 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import classes from "./UpdateCategory.module.css";
 import Card from "../UI/Card";
 import SubmitButton from "../UI/SubmitButton";
 import { useSelector } from "react-redux";
-import CategoryOption from "../Products/UpdateProduct/CategoryOption";
 import useHttp from "../../hooks/use-http";
+import Header from "../UI/Header";
+import UserInput from "../UI/UserInput";
+import ActionResult from "../UI/ActionResult";
 
 const UpdateCategory = () => {
+  const [actionResult, setActionResult] = useState("");
   const oldCategoryInputRef = useRef();
   const newCategoryInputRef = useRef();
   const categories = useSelector((state) => state.categories.categories);
   const { getOneCategory, updateCategory, getCategories } = useHttp();
+
+  const resetActionResult = () => {
+    setTimeout(() => {
+      setActionResult((prevState) => {
+        return {
+          type: prevState.type,
+          message: prevState.message,
+          isActive: false,
+        };
+      });
+    }, 3500);
+    setTimeout(() => setActionResult(""), 4000);
+  };
 
   const formSubmitHandler = async (e) => {
     e.preventDefault();
@@ -19,12 +35,22 @@ const UpdateCategory = () => {
     const oldCategoryName = oldCategoryInputRef.current.value;
 
     if (!newCategoryName) {
-      alert("New category input can not be empty.");
+      setActionResult({
+        type: "error",
+        message: "New category input can not be empty.",
+        isActive: true,
+      });
+      resetActionResult();
       return;
     }
 
     if (newCategoryName === oldCategoryName) {
-      alert("New category input can not be the same as old one  .");
+      setActionResult({
+        type: "error",
+        message: "New category input can not be the same as old one.",
+        isActive: true,
+      });
+      resetActionResult();
       return;
     }
 
@@ -39,11 +65,21 @@ const UpdateCategory = () => {
 
       categoryExists = true;
     } catch (err) {
-      alert(err.message);
+      setActionResult({
+        type: "error",
+        message: err.message,
+        isActive: true,
+      });
+      resetActionResult();
     }
 
     if (!categoryExists) {
-      alert("This category does not exist.");
+      setActionResult({
+        type: "error",
+        message: "This category does not exist.",
+        isActive: true,
+      });
+      resetActionResult();
       return;
     }
 
@@ -51,38 +87,63 @@ const UpdateCategory = () => {
 
     newCategory.name = newCategoryName;
 
-    await updateCategory(category.id, newCategory);
+    try {
+      await updateCategory(category.id, newCategory);
+    } catch (err) {
+      setActionResult({
+        type: "error",
+        message: err.message,
+        isActive: true,
+      });
+      resetActionResult();
+      return;
+    }
 
     await getCategories();
+
+    setActionResult({
+      type: "success",
+      message: "Category has been successfully changed",
+      isActive: true,
+    });
+    resetActionResult();
   };
 
   return (
-    <Card class={classes.updateCategoryWrapper}>
-      <h3 className={classes.updateCategoryHeader}>Update category</h3>
-      <form onSubmit={formSubmitHandler} className={classes.updateCategoryForm}>
-        <div className={classes.singleInput}>
-          <label htmlFor="productCategory">Product Category</label>
-          <select
+    <>
+      <ActionResult
+        type={actionResult.type}
+        actionContent={actionResult.message}
+        isActive={actionResult.isActive}
+      />
+      <Card class={classes.updateCategoryWrapper}>
+        <Header headerContent="Update  category" />
+        <form
+          onSubmit={formSubmitHandler}
+          className={classes.updateCategoryForm}
+        >
+          <UserInput
+            class=""
+            type="select"
+            for="productCategory"
+            label="Product Category"
             id="productCategory"
             name="productCategory"
-            ref={oldCategoryInputRef}
-          >
-            {categories.map((category, i) => (
-              <CategoryOption key={i} categoryName={category.name} />
-            ))}
-          </select>
-        </div>
-        <div className={classes.singleInput}>
-          <label htmlFor="productCategory">New category name</label>
-          <input
-            id="productCategory"
-            name="productCategory"
-            ref={newCategoryInputRef}
+            inputRef={oldCategoryInputRef}
           />
-        </div>
-        <SubmitButton buttonContent="Submit" />
-      </form>
-    </Card>
+          <UserInput
+            class=""
+            type="text"
+            for="newCategory"
+            label="New category name"
+            id="newCategory"
+            name="newCategory"
+            inputRef={newCategoryInputRef}
+          />
+          <SubmitButton buttonContent="Submit" />
+        </form>
+      </Card>
+    </>
   );
 };
 

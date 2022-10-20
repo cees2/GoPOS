@@ -2,57 +2,25 @@
   width: 40%;
 }
 
-h3.addProductCategoryHeader {
-  text-align: center;
-  font-weight: 500;
-  font-size: 24px;
-  margin: 0.5rem 0;
-}
-
-.signleRadioInput input {
+.singleRadioInput input {
   font-size: 60px;
 }
 
 .addProductCategoryForm,
 .addProductForm,
 .addCategoryForm {
-  width: 50%;
-  margin-left: 25%;
   display: flex;
+  align-items: center;
 }
 
 .addProductCategoryForm {
   justify-content: space-between;
+  width: 50%;
+  margin-left: 25%;
 }
 
 .addProductForm,
 .addCategoryForm {
   flex-direction: column;
-  background-color: rgb(129, 129, 129);
   margin-top: 1rem;
-}
-
-.singleInput label {
-  display: block;
-  padding: 0.5rem 0;
-}
-
-button.submitAdditionForm {
-  padding: 0.5rem 2rem;
-  margin-top: 1rem;
-  align-self: flex-start;
-  margin-top: 1rem;
-  padding: 0.5rem 2rem;
-  border: none;
-  border-radius: 6px;
-  margin-left: 25%;
-  width: 50%;
-  background-color: rgb(121, 166, 48);
-  transition: 0.5s;
-  color: white;
-}
-
-button.submitAdditionForm:hover {
-  cursor: pointer;
-  background-color: rgb(144, 196, 61);
 }

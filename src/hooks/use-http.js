@@ -11,18 +11,16 @@ const useHttp = () => {
 
   const sendRequest = async (requestDetails) => {
     try {
-      console.log(JSON.stringify(requestDetails.body));
       const response = await fetch(requestDetails.url, {
         method: requestDetails.method || "GET",
         body: requestDetails.body ? JSON.stringify(requestDetails.body) : null,
         headers: requestDetails.headers || null,
       });
 
+      if (!response.ok)
+        throw new Error("Something went wrong, try again later.");
+
       const data = await response.json();
-
-      console.log(data.errors);
-
-      if (!response.ok) throw new Error(data.errors || "An error has occurred");
 
       return data;
     } catch (err) {

@@ -1,0 +1,17 @@
+.userInput {
+  width: 50%;
+}
+
+.userInput label {
+  display: block;
+  margin: 0.5rem 0;
+}
+
+.userInput input,
+.userInput select {
+  width: 100%;
+  height: 20px;
+  border-radius: 6px;
+  border: none;
+  padding-left: 0.5rem;
+}

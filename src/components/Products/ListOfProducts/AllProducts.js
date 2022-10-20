@@ -2,6 +2,7 @@ import classes from "./AllProducts.module.css";
 import Card from "../../UI/Card";
 import SingleProduct from "./SingleProduct";
 import { useSelector } from "react-redux";
+import Header from "../../UI/Header";
 
 const AllProducts = () => {
   const products = useSelector((state) => state.products.products);
@@ -9,7 +10,7 @@ const AllProducts = () => {
 
   return (
     <Card class={classes.productListWrapper}>
-      <h3 className={classes.productsListHeader}>List of products</h3>
+      <Header headerContent="List of products" />
       <ul className={classes.listOfAllProducts}>
         <SingleProduct productName="Name" productCategory="Category" />
         {products.map((product, i) => (
