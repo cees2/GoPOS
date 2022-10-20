@@ -1,0 +1,9 @@
+span.productNameSpan {
+  display: inline-block;
+  width: 50%;
+  margin-left: 2rem;
+}
+
+li.productNameList:first-child {
+  padding: 0.5rem 0 1rem;
+}

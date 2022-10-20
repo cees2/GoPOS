@@ -1,0 +1,25 @@
+ul.listOfAllProducts {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul.listOfAllProducts li {
+  padding: 0.5rem 0;
+}
+
+ul.listOfAllProducts li:nth-child(even) {
+  background-color: rgba(152, 152, 152, 0.5);
+}
+
+h3.productsListHeader {
+  text-align: center;
+  font-weight: 500;
+  font-size: 24px;
+  margin: 0.5rem 0;
+}
+
+.productListWrapper {
+  height: 90%;
+  top: 5%;
+}

@@ -1,0 +1,31 @@
+header.appHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 10vh;
+  padding: 0 1.5rem;
+  background-color: rgb(200, 200, 200);
+}
+
+ul.appHeaderList {
+  list-style-type: none;
+}
+
+ul.appHeaderList a {
+  margin-right: 1rem;
+  color: black;
+}
+
+ul.appHeaderList a li {
+  display: inline-block;
+  transition: 0.25s;
+}
+
+ul.appHeaderList a li:last-child {
+  margin: 0;
+}
+
+ul.appHeaderList a li:hover {
+  transform: scale(103%);
+  cursor: pointer;
+}

@@ -1,0 +1,8 @@
+.appWrapper {
+  min-height: 100vh;
+}
+
+main.appMain {
+  position: relative;
+  height: 90vh;
+}

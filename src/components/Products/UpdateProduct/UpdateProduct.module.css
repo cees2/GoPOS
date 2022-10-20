@@ -1,0 +1,35 @@
+.updateProductWrapper {
+  width: 40%;
+}
+
+form.updateProductForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.singleTextInput,
+.singleSelectInput {
+  width: 50%;
+}
+
+.singleTextInput label,
+.singleSelectInput label {
+  display: block;
+  margin: 0.5rem 0;
+}
+
+.singleTextInput input,
+.singleSelectInput select {
+  width: 100%;
+  height: 20px;
+  border-radius: 6px;
+  border: none;
+}
+
+h3.changeProductHeader {
+  text-align: center;
+  font-weight: 500;
+  font-size: 24px;
+  margin: 0.5rem 0;
+}

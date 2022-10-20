@@ -1,0 +1,17 @@
+button.submitButton {
+  padding: 0.5rem 2rem;
+  margin-top: 1rem;
+  margin-left: 25%;
+  width: 50%;
+  border-radius: 8px;
+  border: none;
+  color: white;
+  background-color: rgb(121, 166, 48);
+  transition: 0.5s;
+  align-self: flex-start;
+}
+
+button.submitButton:hover {
+  cursor: pointer;
+  background-color: rgb(144, 196, 61);
+}
