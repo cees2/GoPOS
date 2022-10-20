@@ -61,8 +61,9 @@ const AddProductOrCategory = () => {
     const productToBeAdded = {
       name: productName,
       category_id: categoryId,
-      measure_type: "Kilogram",
       type: "BASIC",
+      measure_type: "KILOGRAM",
+      tax_id: 1,
     };
     try {
       await addProduct(productToBeAdded);
