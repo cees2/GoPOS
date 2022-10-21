@@ -28,6 +28,15 @@ const AddProductOrCategory = () => {
     setTimeout(() => setActionResult(""), 4000);
   };
 
+  const setAction = (type, message) => {
+    setActionResult({
+      type,
+      message,
+      isActive: true,
+    });
+    resetActionResult();
+  };
+
   const productInputHandler = () => {
     setSelectedAction("product");
   };
@@ -43,12 +52,7 @@ const AddProductOrCategory = () => {
     const productCategory = productCategoryInputRef.current.value;
 
     if (!productName) {
-      setActionResult({
-        type: "error",
-        message: "Please provide a product name.",
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", "Please provide a product name.");
       return;
     }
 
@@ -68,22 +72,12 @@ const AddProductOrCategory = () => {
     try {
       await addProduct(productToBeAdded);
     } catch (err) {
-      setActionResult({
-        type: "error",
-        message: err.message,
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", err.message);
       return;
     }
     await getProducts();
 
-    setActionResult({
-      type: "success",
-      message: "Product has been successfully added.",
-      isActive: true,
-    });
-    resetActionResult();
+    setAction("success", "Product has been successfully added.");
   };
 
   const categoryFormSubmitHandler = async (e) => {
@@ -91,12 +85,7 @@ const AddProductOrCategory = () => {
     const categoryName = categoryNameInputRef.current.value.trim();
 
     if (!categoryName) {
-      setActionResult({
-        type: "error",
-        message: "Provide a category name.",
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", "Provide a category name.");
       return;
     }
 
@@ -107,34 +96,19 @@ const AddProductOrCategory = () => {
         (category) => category.name.toUpperCase() === categoryName.toUpperCase()
       )
     ) {
-      setActionResult({
-        type: "error",
-        message: "This category already exist.",
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", "This category already exist.");
       return;
     }
 
     try {
       await addCategory(categoryName);
     } catch (err) {
-      setActionResult({
-        type: "error",
-        message: err.message,
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", err.message);
       return;
     }
     await getCategories();
 
-    setActionResult({
-      type: "success",
-      message: "Category has been successfully added.",
-      isActive: true,
-    });
-    resetActionResult();
+    setAction("success", "Category has been successfully added.");
   };
 
   return (

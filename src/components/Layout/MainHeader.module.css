@@ -7,6 +7,20 @@ header.appHeader {
   background-color: rgb(200, 200, 200);
 }
 
+header.appHeader a {
+  text-decoration: none;
+}
+
+header.appHeader a h2 {
+  color: black;
+  transition: 0.25s;
+}
+
+header.appHeader a h2:hover {
+  cursor: pointer;
+  transform: scale(103%);
+}
+
 ul.appHeaderList {
   list-style-type: none;
 }

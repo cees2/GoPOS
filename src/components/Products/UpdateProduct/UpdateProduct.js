@@ -32,6 +32,15 @@ const UpdateProduct = () => {
     setTimeout(() => setActionResult(""), 4000);
   };
 
+  const setAction = (type, message) => {
+    setActionResult({
+      type,
+      message,
+      isActive: true,
+    });
+    resetActionResult();
+  };
+
   const formSubmitHandler = async (e) => {
     e.preventDefault();
     const oldProductName = oldProductNameInputRef.current.value.trim();
@@ -43,32 +52,20 @@ const UpdateProduct = () => {
     );
 
     if (!oldProductName || !newProductName) {
-      setActionResult({
-        type: "error",
-        message: "Fill in every input",
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", "Fill in every input");
       return;
     }
 
-    if (oldProductName === newProductName) {
-      setActionResult({
-        type: "error",
-        message: "New product can not have the same name as old one.",
-        isActive: true,
-      });
-      resetActionResult();
+    if (
+      oldProductName === newProductName &&
+      oldProductCategory === newProductCategory
+    ) {
+      setAction("error", "New product can not be the same as old one.");
       return;
     }
 
     if (!oldProduct) {
-      setActionResult({
-        type: "error",
-        message: "This product does not exist.",
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", "This product does not exist.");
       return;
     }
 
@@ -79,24 +76,14 @@ const UpdateProduct = () => {
     const { data: fetchedOldProduct } = await getOneProduct(oldProductId);
 
     if (fetchedOldProduct.name.toUpperCase() !== oldProductName.toUpperCase()) {
-      setActionResult({
-        type: "error",
-        message: "This product does not exist in our DB",
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", "This product does not exist in our DB.");
       return;
     }
 
     const fetchedOldCategory = getOneCategory(oldProductId);
 
     if (!fetchedOldCategory) {
-      setActionResult({
-        type: "error",
-        message: "This category does not exist in our DB",
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", "This category does not exist in our DB.");
       return;
     }
 
@@ -105,12 +92,7 @@ const UpdateProduct = () => {
     );
 
     if (fetchedOldProduct.category_id !== oldCategoryId) {
-      setActionResult({
-        type: "error",
-        message: "Incorrect category",
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", "Incorrect category.");
       return;
     }
 
@@ -125,23 +107,13 @@ const UpdateProduct = () => {
     try {
       await updateProduct(fetchedOldProduct.id, newProduct);
     } catch (err) {
-      setActionResult({
-        type: "error",
-        message: err.message,
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", err.message);
       return;
     }
 
     await getProducts();
 
-    setActionResult({
-      type: "success",
-      message: "Product has been successfully updated",
-      isActive: true,
-    });
-    resetActionResult();
+    setAction("success", "Product has been successfully updated");
   };
 
   return (

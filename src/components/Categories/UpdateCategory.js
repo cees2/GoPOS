@@ -28,6 +28,15 @@ const UpdateCategory = () => {
     setTimeout(() => setActionResult(""), 4000);
   };
 
+  const setAction = (type, message) => {
+    setActionResult({
+      type,
+      message,
+      isActive: true,
+    });
+    resetActionResult();
+  };
+
   const formSubmitHandler = async (e) => {
     e.preventDefault();
 
@@ -35,22 +44,12 @@ const UpdateCategory = () => {
     const oldCategoryName = oldCategoryInputRef.current.value;
 
     if (!newCategoryName) {
-      setActionResult({
-        type: "error",
-        message: "New category input can not be empty.",
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", "New category input can not be empty.");
       return;
     }
 
     if (newCategoryName === oldCategoryName) {
-      setActionResult({
-        type: "error",
-        message: "New category input can not be the same as old one.",
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", "New category input can not be the same as old one.");
       return;
     }
 
@@ -65,21 +64,11 @@ const UpdateCategory = () => {
 
       categoryExists = true;
     } catch (err) {
-      setActionResult({
-        type: "error",
-        message: err.message,
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", err.message);
     }
 
     if (!categoryExists) {
-      setActionResult({
-        type: "error",
-        message: "This category does not exist.",
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", "This category does not exist.");
       return;
     }
 
@@ -90,23 +79,13 @@ const UpdateCategory = () => {
     try {
       await updateCategory(category.id, newCategory);
     } catch (err) {
-      setActionResult({
-        type: "error",
-        message: err.message,
-        isActive: true,
-      });
-      resetActionResult();
+      setAction("error", err.message);
       return;
     }
 
     await getCategories();
 
-    setActionResult({
-      type: "success",
-      message: "Category has been successfully changed",
-      isActive: true,
-    });
-    resetActionResult();
+    setAction("success", "Category has been successfully changed.");
   };
 
   return (
