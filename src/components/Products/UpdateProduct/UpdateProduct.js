@@ -30,23 +30,16 @@ const UpdateProduct = () => {
       (product) => product.name.toUpperCase() === oldProductName.toUpperCase()
     );
 
-    if (!oldProductName || !newProductName) {
-      setAction("error", "Fill in every input");
-      return;
-    }
+    if (!oldProductName || !newProductName)
+      return setAction("error", "Fill in every input");
 
     if (
       oldProductName === newProductName &&
       oldProductCategory === newProductCategory
-    ) {
-      setAction("error", "New product can not be the same as old one.");
-      return;
-    }
+    )
+      return setAction("error", "New product can not be the same as old one.");
 
-    if (!oldProduct) {
-      setAction("error", "This product does not exist.");
-      return;
-    }
+    if (!oldProduct) return setAction("error", "This product does not exist.");
 
     //Checking if product with that category exist:
 
@@ -54,26 +47,20 @@ const UpdateProduct = () => {
 
     const { data: fetchedOldProduct } = await getOneProduct(oldProductId);
 
-    if (fetchedOldProduct.name.toUpperCase() !== oldProductName.toUpperCase()) {
-      setAction("error", "This product does not exist in our DB.");
-      return;
-    }
+    if (fetchedOldProduct.name.toUpperCase() !== oldProductName.toUpperCase())
+      return setAction("error", "This product does not exist in our DB.");
 
     const fetchedOldCategory = getOneCategory(oldProductId);
 
-    if (!fetchedOldCategory) {
-      setAction("error", "This category does not exist in our DB.");
-      return;
-    }
+    if (!fetchedOldCategory)
+      return setAction("error", "This category does not exist in our DB.");
 
     const { id: oldCategoryId } = categories.find(
       (category) => category.name === oldProductCategory
     );
 
-    if (fetchedOldProduct.category_id !== oldCategoryId) {
-      setAction("error", "Incorrect category.");
-      return;
-    }
+    if (fetchedOldProduct.category_id !== oldCategoryId)
+      return setAction("error", "Incorrect category.");
 
     // When compilator reaches this point --> old product & category is ok
 
@@ -86,8 +73,7 @@ const UpdateProduct = () => {
     try {
       await updateProduct(fetchedOldProduct.id, newProduct);
     } catch (err) {
-      setAction("error", err.message);
-      return;
+      return setAction("error", err.message);
     }
 
     await getProducts();

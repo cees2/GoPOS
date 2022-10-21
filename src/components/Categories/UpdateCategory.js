@@ -22,15 +22,14 @@ const UpdateCategory = () => {
     const newCategoryName = newCategoryInputRef.current.value.trim();
     const oldCategoryName = oldCategoryInputRef.current.value;
 
-    if (!newCategoryName) {
-      setAction("error", "New category input can not be empty.");
-      return;
-    }
+    if (!newCategoryName)
+      return setAction("error", "New category input can not be empty.");
 
-    if (newCategoryName === oldCategoryName) {
-      setAction("error", "New category input can not be the same as old one.");
-      return;
-    }
+    if (newCategoryName === oldCategoryName)
+      return setAction(
+        "error",
+        "New category input can not be the same as old one."
+      );
 
     const category = categories.find(
       (category) => category.name === oldCategoryName
@@ -46,10 +45,8 @@ const UpdateCategory = () => {
       setAction("error", err.message);
     }
 
-    if (!categoryExists) {
-      setAction("error", "This category does not exist.");
-      return;
-    }
+    if (!categoryExists)
+      return setAction("error", "This category does not exist.");
 
     const newCategory = { ...category };
 
@@ -58,8 +55,7 @@ const UpdateCategory = () => {
     try {
       await updateCategory(category.id, newCategory);
     } catch (err) {
-      setAction("error", err.message);
-      return;
+      return setAction("error", err.message);
     }
 
     await getCategories();

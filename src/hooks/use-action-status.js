@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const useActionStatus = () => {
-  const [actionResult, setActionResult] = useState();
+  const [actionResult, setActionResult] = useState("");
 
   const resetActionResult = () => {
     setTimeout(() => {

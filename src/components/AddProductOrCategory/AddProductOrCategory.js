@@ -16,24 +16,17 @@ const AddProductOrCategory = () => {
   const { getCategories, addCategory, addProduct, getProducts } = useHttp();
   const { actionResult, setAction } = useActionStatus();
 
-  const productInputHandler = () => {
-    setSelectedAction("product");
-  };
+  const productInputHandler = () => setSelectedAction("product");
 
-  const categoryInputHandler = () => {
-    setSelectedAction("category");
-  };
+  const categoryInputHandler = () => setSelectedAction("category");
 
   const productFormSubmitHandler = async (e) => {
     e.preventDefault();
-
     const productName = productNameInputRef.current.value.trim();
     const productCategory = productCategoryInputRef.current.value;
 
-    if (!productName) {
-      setAction("error", "Please provide a product name.");
-      return;
-    }
+    if (!productName)
+      return setAction("error", "Please provide a product name.");
 
     const { data: fetchedCategories } = await getCategories();
 
@@ -51,8 +44,7 @@ const AddProductOrCategory = () => {
     try {
       await addProduct(productToBeAdded);
     } catch (err) {
-      setAction("error", err.message);
-      return;
+      return setAction("error", err.message);
     }
     await getProducts();
 
@@ -63,10 +55,7 @@ const AddProductOrCategory = () => {
     e.preventDefault();
     const categoryName = categoryNameInputRef.current.value.trim();
 
-    if (!categoryName) {
-      setAction("error", "Provide a category name.");
-      return;
-    }
+    if (!categoryName) return setAction("error", "Provide a category name.");
 
     const { data: fetchedCategories } = await getCategories();
 
@@ -74,16 +63,13 @@ const AddProductOrCategory = () => {
       fetchedCategories.some(
         (category) => category.name.toUpperCase() === categoryName.toUpperCase()
       )
-    ) {
-      setAction("error", "This category already exist.");
-      return;
-    }
+    )
+      return setAction("error", "This category already exist.");
 
     try {
       await addCategory(categoryName);
     } catch (err) {
-      setAction("error", err.message);
-      return;
+      return setAction("error", err.message);
     }
     await getCategories();
 
