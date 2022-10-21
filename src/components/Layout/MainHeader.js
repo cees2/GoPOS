@@ -5,7 +5,9 @@ import { Link } from "react-router-dom";
 const MainHeader = () => {
   return (
     <header className={classes.appHeader}>
-      <h2>Recruitment task</h2>
+      <Link to="/home">
+        <h2>Recruitment task</h2>
+      </Link>
       <ul className={classes.appHeaderList}>
         <Link to="/products">
           <li>Products</li>
