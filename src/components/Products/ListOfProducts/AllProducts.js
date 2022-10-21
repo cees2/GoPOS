@@ -8,6 +8,16 @@ const AllProducts = () => {
   const products = useSelector((state) => state.products.products);
   const categories = useSelector((state) => state.categories.categories);
 
+  console.log(categories);
+  console.log(products);
+
+  products.forEach((product, i) => {
+    const result = categories.find(
+      (category) => category.id === product.category_id
+    );
+    console.log(result, i);
+  });
+
   return (
     <Card class={classes.productListWrapper}>
       <Header headerContent="List of products" />
@@ -19,7 +29,7 @@ const AllProducts = () => {
             productName={product.name}
             productCategory={
               categories.find((category) => category.id === product.category_id)
-                .name
+                ?.name || "Invalid category"
             }
           />
         ))}
