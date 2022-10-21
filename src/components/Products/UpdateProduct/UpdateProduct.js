@@ -1,15 +1,15 @@
 import Card from "../../UI/Card";
 import SubmitButton from "../../UI/SubmitButton";
 import { useSelector } from "react-redux";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import useHttp from "../../../hooks/use-http";
 import classes from "./UpdateProduct.module.css";
 import Header from "../../UI/Header";
 import UserInput from "../../UI/UserInput";
 import ActionResult from "../../UI/ActionResult";
+import useActionStatus from "../../../hooks/use-action-status";
 
 const UpdateProduct = () => {
-  const [actionResult, setActionResult] = useState("");
   const categories = useSelector((state) => state.categories.categories);
   const products = useSelector((state) => state.products.products);
   const oldProductNameInputRef = useRef();
@@ -18,28 +18,7 @@ const UpdateProduct = () => {
   const newProductCategoryInputRef = useRef();
   const { getProducts, getOneProduct, getOneCategory, updateProduct } =
     useHttp();
-
-  const resetActionResult = () => {
-    setTimeout(() => {
-      setActionResult((prevState) => {
-        return {
-          type: prevState.type,
-          message: prevState.message,
-          isActive: false,
-        };
-      });
-    }, 3500);
-    setTimeout(() => setActionResult(""), 4000);
-  };
-
-  const setAction = (type, message) => {
-    setActionResult({
-      type,
-      message,
-      isActive: true,
-    });
-    resetActionResult();
-  };
+  const { actionResult, setAction } = useActionStatus();
 
   const formSubmitHandler = async (e) => {
     e.preventDefault();

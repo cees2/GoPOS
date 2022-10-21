@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import classes from "./UpdateCategory.module.css";
 import Card from "../UI/Card";
 import SubmitButton from "../UI/SubmitButton";
@@ -7,35 +7,14 @@ import useHttp from "../../hooks/use-http";
 import Header from "../UI/Header";
 import UserInput from "../UI/UserInput";
 import ActionResult from "../UI/ActionResult";
+import useActionStatus from "../../hooks/use-action-status";
 
 const UpdateCategory = () => {
-  const [actionResult, setActionResult] = useState("");
   const oldCategoryInputRef = useRef();
   const newCategoryInputRef = useRef();
   const categories = useSelector((state) => state.categories.categories);
   const { getOneCategory, updateCategory, getCategories } = useHttp();
-
-  const resetActionResult = () => {
-    setTimeout(() => {
-      setActionResult((prevState) => {
-        return {
-          type: prevState.type,
-          message: prevState.message,
-          isActive: false,
-        };
-      });
-    }, 3500);
-    setTimeout(() => setActionResult(""), 4000);
-  };
-
-  const setAction = (type, message) => {
-    setActionResult({
-      type,
-      message,
-      isActive: true,
-    });
-    resetActionResult();
-  };
+  const { actionResult, setAction } = useActionStatus();
 
   const formSubmitHandler = async (e) => {
     e.preventDefault();

@@ -6,36 +6,15 @@ import useHttp from "../../hooks/use-http";
 import Header from "../UI/Header";
 import UserInput from "../UI/UserInput";
 import ActionResult from "../UI/ActionResult";
+import useActionStatus from "../../hooks/use-action-status";
 
 const AddProductOrCategory = () => {
-  const [actionResult, setActionResult] = useState("");
   const [selectedAction, setSelectedAction] = useState("");
   const productNameInputRef = useRef();
   const productCategoryInputRef = useRef();
   const categoryNameInputRef = useRef();
   const { getCategories, addCategory, addProduct, getProducts } = useHttp();
-
-  const resetActionResult = () => {
-    setTimeout(() => {
-      setActionResult((prevState) => {
-        return {
-          type: prevState.type,
-          message: prevState.message,
-          isActive: false,
-        };
-      });
-    }, 3500);
-    setTimeout(() => setActionResult(""), 4000);
-  };
-
-  const setAction = (type, message) => {
-    setActionResult({
-      type,
-      message,
-      isActive: true,
-    });
-    resetActionResult();
-  };
+  const { actionResult, setAction } = useActionStatus();
 
   const productInputHandler = () => {
     setSelectedAction("product");
