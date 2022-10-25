@@ -1,4 +1,0 @@
-updatowanie cat i prod ma byc w redux-ie
-alert np o poprawnym dodaniu produktu
-error w UI.
-nie dziala dodawanie produktu
